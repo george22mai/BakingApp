@@ -4,6 +4,7 @@ package com.bakingapp.Fragments;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -44,6 +45,8 @@ public class StepFragment extends Fragment {
     @BindView(R.id.exo_play) PlayerView playerView;
     @BindView(R.id.text) TextView description;
 
+    SimpleExoPlayer player;
+
     public StepFragment() {
         // Required empty public constructor
     }
@@ -58,7 +61,7 @@ public class StepFragment extends Fragment {
         BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
         TrackSelection.Factory videoTrackSelection = new AdaptiveTrackSelection.Factory(bandwidthMeter);
         TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelection);
-        SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector);
+        player = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector);
         playerView.setPlayer(player);
         MediaSource mediaSource = new ExtractorMediaSource(Uri.parse(Singleton.getInstance(getContext()).getRecipes().get(getRecipe()).getSteps().get(getStep()).getVideoURL()),
                 new DefaultDataSourceFactory(getContext(), getString(R.string.app_name)),
@@ -80,6 +83,19 @@ public class StepFragment extends Fragment {
 
     private int getStep(){
         return getArguments().getInt("stepPosition");
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putLong("PLAYBACK_POSITION", player.getCurrentPosition());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState != null)
+            player.seekTo(savedInstanceState.getInt("SCROLL_POSITION"));
+        super.onViewStateRestored(savedInstanceState);
     }
 
 }

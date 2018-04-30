@@ -2,12 +2,17 @@ package com.bakingapp.Fragments;
 
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -44,7 +49,8 @@ public class RecipesFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_recipes, container, false);
+        final View view = inflater.inflate(R.layout.fragment_recipes, container, false);
+        setHasOptionsMenu(true);
         ButterKnife.bind(this, view);
 
         layoutManager = new GridLayoutManager(getContext(), 1);
@@ -55,7 +61,6 @@ public class RecipesFragment extends Fragment
 
         if (view.findViewById(R.id.tablet_layout) != null){
             layoutManager.setSpanCount(3);
-            Toast.makeText(getContext(), "tablet", Toast.LENGTH_SHORT).show();
         }
 
         RetrofitClient.RetrofitInterface retrofitInterface = RetrofitClient.getInstance(getContext()).create(RetrofitClient.RetrofitInterface.class);
@@ -68,6 +73,7 @@ public class RecipesFragment extends Fragment
                 recipes.clear();
                 recipes.addAll(util.getRecipes());
                 adapter.notifyDataSetChanged();
+                //fillMenu();
             }
 
             @Override
@@ -82,12 +88,40 @@ public class RecipesFragment extends Fragment
     @Override
     public void onItemClick(int position) {
         Bundle bundle = new Bundle();
-        bundle.putInt("position", position);
+        bundle.putInt("POSITION", position);
         RecipeFragment fragment = new RecipeFragment();
         fragment.setArguments(bundle);
         getActivity().getSupportFragmentManager().beginTransaction()
-                .addToBackStack("recipes")
-                .replace(R.id.main_activity_fragment, fragment)
+                //addToBackStack("recipes")
+                .replace(R.id.main_activity_fragment, fragment, "recipes")
                 .commit();
+    }
+
+    public void fillMenu(){
+            NavigationView navigationView = getActivity().findViewById(R.id.nav_view);
+            Menu menu = navigationView.getMenu();
+            List<Recipe> recipes = util.getRecipes();
+            SubMenu subMenu = menu.addSubMenu("Recipes");
+            for (int i = 0; i < recipes.size(); i++)
+                subMenu.add(0, i, 1, recipes.get(i).getName());
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        //fillMenu();
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt("SCROLL_POSITION", layoutManager.findFirstCompletelyVisibleItemPosition());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState != null)
+            recyclerView.scrollToPosition(savedInstanceState.getInt("SCROLL_POSITION"));
+        super.onViewStateRestored(savedInstanceState);
     }
 }
