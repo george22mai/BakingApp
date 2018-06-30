@@ -54,19 +54,19 @@ public class RecipeFragment extends Fragment
         list.addAll(getList(getPosition(), Singleton.getInstance(getContext()).getRecipes()));
         adapter.notifyDataSetChanged();
 
-//        if (savedInstanceState != null){
-//            if (view.findViewById(R.id.video_fragment) == null)
-//                Toast.makeText(getContext(), "null video fragment", Toast.LENGTH_SHORT).show();
-//            Bundle bundle = new Bundle();
-//            bundle.putInt("recipePosition", getPosition());
-//            bundle.putInt("stepPosition", savedInstanceState.getInt("SELECTED_STEP"));
-//            StepFragment fragment = new StepFragment();
-//            fragment.setArguments(bundle);
-//            getActivity().getSupportFragmentManager().beginTransaction()
-//                    .addToBackStack("recipe")
-//                    .replace(R.id.video_fragment, fragment)
-//                    .commit();
-//        }
+        if (savedInstanceState != null){
+            if (view.findViewById(R.id.video_fragment) == null)
+                Toast.makeText(getContext(), "null video fragment", Toast.LENGTH_SHORT).show();
+            Bundle bundle = new Bundle();
+            bundle.putInt("recipePosition", getPosition());
+            bundle.putInt("stepPosition", savedInstanceState.getInt("SELECTED_STEP"));
+            StepFragment fragment = new StepFragment();
+            fragment.setArguments(bundle);
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .addToBackStack("recipe")
+                    .replace(R.id.video_fragment, fragment)
+                    .commit();
+        }
 
         return view;
     }
@@ -116,19 +116,19 @@ public class RecipeFragment extends Fragment
 
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-//        if (savedInstanceState != null){
-//            Bundle bundle = new Bundle();
-//            bundle.putInt("POSITION", savedInstanceState.getInt("POSITION"));
-//            bundle.putInt("SCROLL_POSITION", savedInstanceState.getInt("SCROLL_POSITION"));
-//            bundle.putInt("SELECTED_STEP", savedInstanceState.getInt("SELECTED_STEP"));
-//            RecipeFragment fragment = new RecipeFragment();
-//            fragment.setArguments(bundle);
-//            getActivity().getSupportFragmentManager().beginTransaction()
-//                    .addToBackStack("recipes")
-//                    .replace(R.id.main_activity_fragment, fragment)
-//                    .commit();
-//            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.main_activity_fragment, fragment).commit();
-//        }
+        if (savedInstanceState != null){
+            Bundle bundle = new Bundle();
+            bundle.putInt("POSITION", savedInstanceState.getInt("POSITION"));
+            bundle.putInt("SCROLL_POSITION", savedInstanceState.getInt("SCROLL_POSITION"));
+            bundle.putInt("SELECTED_STEP", savedInstanceState.getInt("SELECTED_STEP"));
+            RecipeFragment fragment = new RecipeFragment();
+            fragment.setArguments(bundle);
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .addToBackStack("recipes")
+                    .replace(R.id.main_activity_fragment, fragment)
+                    .commit();
+            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.main_activity_fragment, fragment).commit();
+        }
         super.onViewStateRestored(savedInstanceState);
     }
 }

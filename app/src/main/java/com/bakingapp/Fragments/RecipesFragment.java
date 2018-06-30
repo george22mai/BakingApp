@@ -1,6 +1,11 @@
 package com.bakingapp.Fragments;
 
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -19,6 +24,9 @@ import android.widget.Toast;
 
 import com.bakingapp.R;
 import com.bakingapp.Utilities.Adapters.RecipeAdapter;
+import com.bakingapp.Utilities.Database.DatabaseContentProvider;
+import com.bakingapp.Utilities.Database.Table;
+import com.bakingapp.Utilities.Objects.Ingredient;
 import com.bakingapp.Utilities.Objects.Recipe;
 import com.bakingapp.Utilities.Retrofit.RetrofitClient;
 import com.bakingapp.Utilities.Singleton;
@@ -40,6 +48,7 @@ public class RecipesFragment extends Fragment
     GridLayoutManager layoutManager;
     RecipeAdapter adapter;
     Singleton util = Singleton.getInstance(getContext());
+    public static Uri uri = Uri.parse(DatabaseContentProvider.BASE_PATH + DatabaseContentProvider.PACKAGE + "/" + Table.TABLE);
 
     public RecipesFragment() {
         // Required empty public constructor
@@ -92,9 +101,10 @@ public class RecipesFragment extends Fragment
         RecipeFragment fragment = new RecipeFragment();
         fragment.setArguments(bundle);
         getActivity().getSupportFragmentManager().beginTransaction()
-                //addToBackStack("recipes")
+                .addToBackStack("recipes")
                 .replace(R.id.main_activity_fragment, fragment, "recipes")
                 .commit();
+        saveToDb(position);
     }
 
     public void fillMenu(){
@@ -123,5 +133,24 @@ public class RecipesFragment extends Fragment
         if (savedInstanceState != null)
             recyclerView.scrollToPosition(savedInstanceState.getInt("SCROLL_POSITION"));
         super.onViewStateRestored(savedInstanceState);
+    }
+
+    public void saveToDb(int position){
+        getContext().getContentResolver().delete(uri, null, null);
+        ContentValues values;
+        for (Ingredient ingredient : util.getRecipes().get(position).getIngredients()) {
+            values = new ContentValues();
+            values.put("title", ingredient.getIngredient() + " " + ingredient.getQuantity() + " " + ingredient.getMeasure());
+            getContext().getContentResolver().insert(uri, values);
+        }
+//        Cursor cursor = getContext().getContentResolver().query(uri, null, null, null, null);
+//        cursor.moveToFirst();
+//        Toast.makeText(getContext(), cursor.getString(1) + "", Toast.LENGTH_SHORT).show();
+
+//        AppWidgetManager manager = AppWidgetManager.getInstance(getContext());
+//        BakeAppWidget.updateAppWidgets(getContext(), manager, manager.getAppWidgetIds(new ComponentName(getContext(), BakeAppWidget.class)));
+
+        BakeAppWidget.sendRefreshBroadcast(getContext());
+        Toast.makeText(getContext(), util.getRecipes().get(position).getIngredients().get(0).getIngredient(), Toast.LENGTH_SHORT).show();
     }
 }
