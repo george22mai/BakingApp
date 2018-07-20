@@ -5,6 +5,11 @@
     tools:context="com.bakingapp.Fragments.StepFragment"
     android:orientation="vertical">
 
+    <ImageView
+        android:id="@+id/thumbnail"
+        android:layout_width="100dp"
+        android:layout_height="100dp" />
+
     <com.google.android.exoplayer2.ui.PlayerView
         android:id="@+id/exo_play"
         android:layout_width="match_parent"

@@ -1,6 +1,7 @@
 package com.bakingapp.Fragments;
 
 
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,14 +38,16 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class StepFragment extends Fragment {
+public class StepFragment extends Fragment{
 
     @BindView(R.id.exo_play) PlayerView playerView;
     @BindView(R.id.text) TextView description;
+    @BindView(R.id.thumbnail) ImageView thumbnail;
 
     SimpleExoPlayer player;
 
@@ -57,6 +61,14 @@ public class StepFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_step, container, false);
         ButterKnife.bind(this, view);
+
+        String thumbnailURL = Singleton.getInstance(getContext()).getRecipes().get(getRecipe()).getSteps().get(getStep()).getThumbnailURL();
+        if (!thumbnailURL.substring(thumbnailURL.length() - 3, thumbnailURL.length()).equals("mp4")){
+            Picasso.get().load(thumbnailURL).into(thumbnail);
+//            Toast.makeText(getContext(), thumbnailURL, Toast.LENGTH_SHORT).show();
+        }else {
+            Log.d("ERROR_THUMBNAIL", "MP4 FILE FOUND");
+        }
 
         BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
         TrackSelection.Factory videoTrackSelection = new AdaptiveTrackSelection.Factory(bandwidthMeter);
@@ -73,7 +85,6 @@ public class StepFragment extends Fragment {
         player.setPlayWhenReady(true);
 
         description.setText(Singleton.getInstance(getContext()).getRecipes().get(getRecipe()).getSteps().get(getStep()).getDescription());
-
         return view;
     }
 
@@ -98,4 +109,15 @@ public class StepFragment extends Fragment {
         super.onViewStateRestored(savedInstanceState);
     }
 
+    @Override
+    public void onStop() {
+        playerView.getPlayer().release();
+        super.onStop();
+    }
+
+    @Override
+    public void onPause() {
+        playerView.getPlayer().release();
+        super.onPause();
+    }
 }

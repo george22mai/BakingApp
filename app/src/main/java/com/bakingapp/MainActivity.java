@@ -3,6 +3,7 @@ package com.bakingapp;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -20,6 +21,7 @@ import com.bakingapp.Fragments.RecipesFragment;
 import com.bakingapp.Utilities.Objects.Recipe;
 import com.bakingapp.Utilities.Retrofit.RetrofitClient;
 import com.bakingapp.Utilities.Singleton;
+import com.google.android.exoplayer2.ui.PlayerView;
 
 import java.util.List;
 

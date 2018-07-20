@@ -62,10 +62,10 @@ public class RecipeFragment extends Fragment
             bundle.putInt("stepPosition", savedInstanceState.getInt("SELECTED_STEP"));
             StepFragment fragment = new StepFragment();
             fragment.setArguments(bundle);
-            getActivity().getSupportFragmentManager().beginTransaction()
-                    .addToBackStack("recipe")
-                    .replace(R.id.video_fragment, fragment)
-                    .commit();
+//            getActivity().getSupportFragmentManager().beginTransaction()
+//                    .addToBackStack("recipe")
+//                    .replace(R.id.video_fragment, fragment)
+//                    .commit();
         }
 
         return view;
