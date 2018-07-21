@@ -63,7 +63,7 @@ public class StepFragment extends Fragment{
         ButterKnife.bind(this, view);
 
         String thumbnailURL = Singleton.getInstance(getContext()).getRecipes().get(getRecipe()).getSteps().get(getStep()).getThumbnailURL();
-        if (!thumbnailURL.substring(thumbnailURL.length() - 3, thumbnailURL.length()).equals("mp4")){
+        if (!thumbnailURL.isEmpty() && !thumbnailURL.substring(thumbnailURL.length() - 3, thumbnailURL.length()).equals("mp4")){
             Picasso.get().load(thumbnailURL).into(thumbnail);
 //            Toast.makeText(getContext(), thumbnailURL, Toast.LENGTH_SHORT).show();
         }else {
